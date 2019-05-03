@@ -2,7 +2,7 @@ services:
   - docker
 
 script:
-  - "export TAGSPACES_VERSION=$(curl -H \"Authorization\: token $GITHUB_TOKEN\" https://api.github.com/repos/tagspaces/tagspaces/releases/latest --silent | jq .tag_name -r)"
+  - 'export TAGSPACES_VERSION=$(curl -H "Authorization: token $GITHUB_TOKEN" https://api.github.com/repos/tagspaces/tagspaces/releases/latest --silent | jq .tag_name -r)''
   - docker build --build-arg TAGSPACES_VERSION . -t "joschi36/tagspaces:$(echo $TAGSPACES_VERSION)"
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
   - docker push "joschi36/tagspaces:$(echo $TAGSPACES_VERSION)"
