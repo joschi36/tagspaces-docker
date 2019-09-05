@@ -1,20 +1,22 @@
 name: Docker Image CI
 
-on: [push]
+on:
+  push:
+    branches:
+      - master
 
 jobs:
-
   build:
- 
     runs-on: ubuntu-latest
- 
     steps:
     - uses: actions/checkout@v1
     - name: Download Tagspaces
       run: 'export TAGSPACES_VERSION=$(curl -H "Authorization: token $GITHUB_TOKEN" https://api.github.com/repos/tagspaces/tagspaces/releases/latest --silent | jq .tag_name -r)'
-    - name: Build the Docker image
-      run: docker build --build-arg TAGSPACES_VERSION . -t "joschi36/tagspaces:$(echo $TAGSPACES_VERSION)"
-    - name: Docker Login
-      run: echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-    - name: Docker Push
-      run: docker push "joschi36/tagspaces:$(echo $TAGSPACES_VERSION)"
+    - name: Build and push to docker hub
+      uses: "pangzineng/Github-Action-One-Click-Docker@master"
+      secrets:
+      - "DOCKER_USERNAME" 
+      - "DOCKER_PASSWORD"
+      env:
+        DOCKER_IMAGE_NAME: joschi36/tagspaces
+        DOCKER_IMAGE_VERSION: ${{ TAGSPACES_VERSION }}
